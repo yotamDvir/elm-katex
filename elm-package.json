@@ -1,7 +1,7 @@
 {
     "version": "1.0.0",
     "summary": "KaTeX in elm (without ports): a fast LaTeX rendering library from Kahn Academy.",
-    "repository": "https://github.com/user/project.git",
+    "repository": "https://github.com/yotamDvir/elm-katex.git",
     "license": "BSD3",
     "source-directories": [
         "src"

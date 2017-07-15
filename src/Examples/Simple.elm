@@ -1,7 +1,13 @@
 module Examples.Simple exposing (main)
 
 import Html exposing (Html)
-import Katex.Simple as K exposing (Latex, Passage, human, inline, display)
+import Katex.Simple as K
+    exposing
+        ( Passage
+        , human
+        , inline
+        , display
+        )
 
 
 passage : Passage

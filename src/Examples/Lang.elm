@@ -2,7 +2,13 @@ module Examples.Lang exposing (main)
 
 import Html exposing (Html)
 import Html.Attributes exposing (dir)
-import Katex.Lang as K exposing (Latex, Passage, inline, display)
+import Katex.Lang as K
+    exposing
+        ( Latex
+        , Passage
+        , inline
+        , display
+        )
 
 
 type alias Language =

@@ -2,7 +2,12 @@ module Examples.Config exposing (main)
 
 import Html exposing (Html)
 import Regex exposing (HowMany(All), regex, escape, replace)
-import Katex.Config as K exposing (Latex, Passage, human)
+import Katex.Config as K
+    exposing
+        ( Latex
+        , Passage
+        , human
+        )
 
 
 type alias Config =

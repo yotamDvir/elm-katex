@@ -6,75 +6,96 @@ __No ports are necessary__, but the KaTeX library must be loaded in the event lo
 
 ## The layout of this Elm package
 
-There are four modules which all perform the same basic task: `Simple`, `Config`, `Lang`, and `Complex`.
+There are four modules in this package: `Katex`, `Katex.Configs.Math`, `Katex.Configs.Human`, and `Katex.Configs`. They all perform the same task, but at different levels of customizability.
 
-They all contain the same LaTeX instance creators:
+They all contain alike LaTeX instance creators:
 
 * `human` - for writing regular text
 * `inline` - for writing LaTeX code in inline math environment
 * `display`- for writing LaTeX code in display math environment
 
-and the same processors for showing LaTeX:
+and alike processors for showing LaTeX:
 
-* `compile` - for turning a LaTeX instance into a string
-* `view` - for joining a list of LaTeX instances (henceforth a passage) and turning it into an HTML text node
+* `print` - for turning a LaTeX instance into a string
+* `generate` - for generating functions that process LaTeX
+
+The only difference between the modules is their simplicity-versatility tade-off.
 
 ## How it works
 
-We use `human` for writing regular text, and `inline`/`display` to write LaTeX code in inline/display math environment.
+We use `human` for writing regular text, and `inline`/`display` to write LaTeX code in inline/display math environment. These all return LaTeX instances.
 
-Each such LaTeX instance can be `compile`d to a string (which the KaTeX library will parse after Elm loads), but the most common usage is probably to turn a passage into a text node, which is what `view` does.
+Each such LaTeX instance can be `print`ed to a string (which the KaTeX library will recognize and parse after Elm loads). More generally, you can `generate` a function which parses LaTeX instances into anything.
 
 ## Working examples
 
-### Simple
+We will start with the simplest module, then show what can be done with the others.
 
-In this example we simply want a LaTeX passage.
+### Katex
+
+In this example we use `generate` to create an HTML emitting function which puts display math in a `div`, but inline math and human text in a `span`.
 
 ```elm
 module Examples.Simple exposing (main)
 
-import Html exposing (Html)
-import Katex.Simple as K exposing (Latex, Passage, human, inline, display)
+import Html as H exposing (Html)
+import Katex as K
+    exposing
+        ( Latex
+        , human
+        , inline
+        , display
+        )
 
 
-passage : Passage
+passage : List Latex
 passage =
     [ human "We denote by "
     , inline "\\phi"
     , human " the formula for which "
     , display "\\Gamma \\vDash \\phi"
-    , human "."
     ]
 
 
 view : Html a
 view =
-    Html.div
-        []
-        [ K.view passage
-        ]
+    let
+        htmlGenerator isDisplayMode stringLatex =
+            case isDisplayMode of
+                Just True ->
+                    H.div [] [ H.text stringLatex ]
+
+                _ ->
+                    H.span [] [ H.text stringLatex ]
+    in
+        passage
+            |> List.map (K.generate htmlGenerator)
+            |> H.div []
 
 
 main : Program Never () msg
 main =
-    Html.beginnerProgram
+    H.beginnerProgram
         { model = ()
         , update = flip always
         , view = always view
         }
 ```
 
-### Config
+### Katex.Configs.Math
 
-In the following we wish to replace `\phi` with `\varphi` depending on the model.
+In this module we can configure how `m`ath code is parsed. In the following example, we use this functionality to replace `\phi` with `\varphi`, depending on the model.
 
 ```elm
-module Examples.Config exposing (main)
+module Examples.Configs.Math exposing (main)
 
-import Html exposing (Html)
+import Html as H exposing (Html)
 import Regex exposing (HowMany(All), regex, escape, replace)
-import Katex.Config as K exposing (Latex, Passage, human)
+import Katex.Configs.Math as K
+    exposing
+        ( Latex
+        , human
+        )
 
 
 type alias Config =
@@ -110,46 +131,53 @@ display =
     K.display << selector
 
 
-passage : Passage Config
+passage : List (Latex Config)
 passage =
     [ human "We denote by "
     , inline "\\phi"
     , human " the formula for which "
     , display "\\Gamma \\vDash \\phi"
-    , human "."
     ]
 
 
 view : Config -> Html a
 view isVar =
-    Html.div
-        []
-        [ K.view isVar passage
-        ]
+    let
+        htmlGenerator _ _ stringLatex =
+            H.span [] [ H.text stringLatex ]
+    in
+        passage
+            |> List.map (K.generate htmlGenerator isVar)
+            |> H.div []
 
 
 main : Program Never Config msg
 main =
-    Html.beginnerProgram
+    H.beginnerProgram
         { model = True
         , update = flip always
         , view = view
         }
 ```
 
-### Lang
+### Katex.Configs.Human
 
-Here we wish to write our LaTeX passage in Hebrew as well as in English.
+In this module we can configure how `h`uman text is parsed. In the following example, we use this functionality to switch between Hebrew and English, depending on the model.
 
 ```elm
-module Examples.Lang exposing (main)
+module Examples.Configs.Human exposing (main)
 
-import Html exposing (Html)
+import Html as H exposing (Html)
 import Html.Attributes exposing (dir)
-import Katex.Lang as K exposing (Latex, Passage, inline, display)
+import Katex.Configs.Human as K
+    exposing
+        ( Latex
+        , inline
+        , display
+        )
 
 
-type alias Language =
+type alias Config =
     Bool
 
 
@@ -157,7 +185,7 @@ type alias Data =
     ( String, String )
 
 
-selector : Data -> Language -> String
+selector : Data -> Config -> String
 selector ( english, hebrew ) isHeb =
     if isHeb then
         hebrew
@@ -165,12 +193,12 @@ selector ( english, hebrew ) isHeb =
         english
 
 
-human : Data -> Latex Language
+human : Data -> Latex Config
 human =
     K.human << selector
 
 
-passage : Passage Language
+passage : List (Latex Config)
 passage =
     [ human
         ( "We denote by "
@@ -189,30 +217,35 @@ passage =
     ]
 
 
-view : Language -> Html a
+view : Config -> Html a
 view isHeb =
-    Html.div
-        [ if isHeb then
-            dir "rtl"
-          else
-            dir "ltr"
-        ]
-        [ K.view isHeb passage
-        ]
+    let
+        direction =
+            if isHeb then
+                dir "rtl"
+            else
+                dir "ltr"
+
+        htmlGenerator _ _ stringLatex =
+            H.span [] [ H.text stringLatex ]
+    in
+        passage
+            |> List.map (K.generate htmlGenerator isHeb)
+            |> H.div [ direction ]
 
 
-main : Program Never Language msg
+main : Program Never Config msg
 main =
-    Html.beginnerProgram
+    H.beginnerProgram
         { model = True
         , update = flip always
         , view = view
         }
 ```
 
-### Complex
+### Katex.Configs
 
-This is simply in case you need the functionalities of both `Lang` and `Config`.
+In this module we can configure how both `m`ath code and `h`uman text are parsed - a combination of the previous modules.
 
 ## Loading KaTeX
 

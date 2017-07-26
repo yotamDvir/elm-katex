@@ -1,36 +1,43 @@
 module Examples.Simple exposing (main)
 
-import Html exposing (Html)
-import Katex.Simple as K
+import Html as H exposing (Html)
+import Katex as K
     exposing
-        ( Passage
+        ( Latex
         , human
         , inline
         , display
         )
 
 
-passage : Passage
+passage : List Latex
 passage =
     [ human "We denote by "
     , inline "\\phi"
     , human " the formula for which "
     , display "\\Gamma \\vDash \\phi"
-    , human "."
     ]
 
 
 view : Html a
 view =
-    Html.div
-        []
-        [ K.view passage
-        ]
+    let
+        htmlGenerator isDisplayMode stringLatex =
+            case isDisplayMode of
+                Just True ->
+                    H.div [] [ H.text stringLatex ]
+
+                _ ->
+                    H.span [] [ H.text stringLatex ]
+    in
+        passage
+            |> List.map (K.generate htmlGenerator)
+            |> H.div []
 
 
 main : Program Never () msg
 main =
-    Html.beginnerProgram
+    H.beginnerProgram
         { model = ()
         , update = flip always
         , view = always view

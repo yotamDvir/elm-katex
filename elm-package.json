@@ -1,5 +1,5 @@
 {
-    "version": "1.0.0",
+    "version": "2.0.0",
     "summary": "KaTeX in elm (without ports): a fast LaTeX rendering library from Kahn Academy.",
     "repository": "https://github.com/yotamDvir/elm-katex.git",
     "license": "BSD3",
@@ -7,10 +7,10 @@
         "src"
     ],
     "exposed-modules": [
-        "Katex.Simple",
-        "Katex.Config",
-        "Katex.Lang",
-        "Katex.Complex"
+        "Katex",
+        "Katex.Configs.Math",
+        "Katex.Configs.Human",
+        "Katex.Configs"
     ],
     "dependencies": {
         "elm-lang/core": "5.1.1 <= v < 6.0.0",

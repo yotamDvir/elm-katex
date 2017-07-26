@@ -1,17 +1,16 @@
-module Examples.Lang exposing (main)
+module Examples.Configs.Human exposing (main)
 
-import Html exposing (Html)
+import Html as H exposing (Html)
 import Html.Attributes exposing (dir)
-import Katex.Lang as K
+import Katex.Configs.Human as K
     exposing
         ( Latex
-        , Passage
         , inline
         , display
         )
 
 
-type alias Language =
+type alias Config =
     Bool
 
 
@@ -19,7 +18,7 @@ type alias Data =
     ( String, String )
 
 
-selector : Data -> Language -> String
+selector : Data -> Config -> String
 selector ( english, hebrew ) isHeb =
     if isHeb then
         hebrew
@@ -27,12 +26,12 @@ selector ( english, hebrew ) isHeb =
         english
 
 
-human : Data -> Latex Language
+human : Data -> Latex Config
 human =
     K.human << selector
 
 
-passage : Passage Language
+passage : List (Latex Config)
 passage =
     [ human
         ( "We denote by "
@@ -51,21 +50,26 @@ passage =
     ]
 
 
-view : Language -> Html a
+view : Config -> Html a
 view isHeb =
-    Html.div
-        [ if isHeb then
-            dir "rtl"
-          else
-            dir "ltr"
-        ]
-        [ K.view isHeb passage
-        ]
+    let
+        direction =
+            if isHeb then
+                dir "rtl"
+            else
+                dir "ltr"
+
+        htmlGenerator _ _ stringLatex =
+            H.span [] [ H.text stringLatex ]
+    in
+        passage
+            |> List.map (K.generate htmlGenerator isHeb)
+            |> H.div [ direction ]
 
 
-main : Program Never Language msg
+main : Program Never Config msg
 main =
-    Html.beginnerProgram
+    H.beginnerProgram
         { model = True
         , update = flip always
         , view = view

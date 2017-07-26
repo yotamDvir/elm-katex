@@ -1,11 +1,10 @@
-module Examples.Config exposing (main)
+module Examples.Configs.Math exposing (main)
 
-import Html exposing (Html)
+import Html as H exposing (Html)
 import Regex exposing (HowMany(All), regex, escape, replace)
-import Katex.Config as K
+import Katex.Configs.Math as K
     exposing
         ( Latex
-        , Passage
         , human
         )
 
@@ -43,27 +42,29 @@ display =
     K.display << selector
 
 
-passage : Passage Config
+passage : List (Latex Config)
 passage =
     [ human "We denote by "
     , inline "\\phi"
     , human " the formula for which "
     , display "\\Gamma \\vDash \\phi"
-    , human "."
     ]
 
 
 view : Config -> Html a
 view isVar =
-    Html.div
-        []
-        [ K.view isVar passage
-        ]
+    let
+        htmlGenerator _ _ stringLatex =
+            H.span [] [ H.text stringLatex ]
+    in
+        passage
+            |> List.map (K.generate htmlGenerator isVar)
+            |> H.div []
 
 
 main : Program Never Config msg
 main =
-    Html.beginnerProgram
+    H.beginnerProgram
         { model = True
         , update = flip always
         , view = view

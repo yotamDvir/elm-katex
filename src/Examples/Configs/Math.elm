@@ -1,11 +1,7 @@
 module Examples.Configs.Math exposing (main)
 
 import Html as H exposing (Html)
-import Katex.Configs.Math as K
-    exposing
-        ( Latex
-        , human
-        )
+import Katex.Configs.Math as K exposing (Latex, human)
 import Regex exposing (HowMany(..), escape, regex, replace)
 
 

@@ -1,29 +1,33 @@
-module Katex.Configs
-    exposing
-        ( Latex
-        , human
-        , inline
-        , display
-        , print
-        , generate
-        )
+module Katex.Configs exposing
+    ( Latex
+    , human, inline, display
+    , print, generate
+    )
 
 {-| You should use this module only if you need both `m`ath and `h`uman configurations.
 
 _Understand `Katex.Configs.Math` and `Katex.Configs.Human` before reading on._
 
+
 ### Why is this module necessary?
 
 You may need both types of configurations (`m`ath and `h`uman).
 
+
 # Types
+
 @docs Latex
 
+
 # Create LaTeX instance
+
 @docs human, inline, display
 
+
 # Process LaTeX instances
+
 @docs print, generate
+
 -}
 
 
@@ -70,18 +74,19 @@ generate g m h latex =
         g_ =
             g m h
     in
-        case latex of
-            Human f ->
-                f h
-                    |> g_ Nothing
+    case latex of
+        Human f ->
+            f h
+                |> g_ Nothing
 
-            Math b f ->
-                let
-                    env =
-                        if b then
-                            "display"
-                        else
-                            "inline"
-                in
-                    ("$begin-" ++ env ++ "$" ++ f m ++ "$end-" ++ env ++ "$")
-                        |> g_ (Just b)
+        Math b f ->
+            let
+                env =
+                    if b then
+                        "display"
+
+                    else
+                        "inline"
+            in
+            ("$begin-" ++ env ++ "$" ++ f m ++ "$end-" ++ env ++ "$")
+                |> g_ (Just b)

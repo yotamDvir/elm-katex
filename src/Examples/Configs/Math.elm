@@ -1,12 +1,8 @@
 module Examples.Configs.Math exposing (main)
 
 import Html as H exposing (Html)
-import Regex exposing (HowMany(All), regex, escape, replace)
-import Katex.Configs.Math as K
-    exposing
-        ( Latex
-        , human
-        )
+import Katex.Configs.Math as K exposing (Latex, human)
+import Regex exposing (HowMany(..), escape, regex, replace)
 
 
 type alias Config =
@@ -26,10 +22,11 @@ selector string isVar =
         varphi =
             replace All (regex (escape "\\phi")) (always "\\varphi") string
     in
-        if isVar then
-            varphi
-        else
-            phi
+    if isVar then
+        varphi
+
+    else
+        phi
 
 
 inline : Data -> Latex Config
@@ -57,15 +54,15 @@ view isVar =
         htmlGenerator _ _ stringLatex =
             H.span [] [ H.text stringLatex ]
     in
-        passage
-            |> List.map (K.generate htmlGenerator isVar)
-            |> H.div []
+    passage
+        |> List.map (K.generate htmlGenerator isVar)
+        |> H.div []
 
 
 main : Program Never Config msg
 main =
     H.beginnerProgram
         { model = True
-        , update = flip always
+        , update = \b a -> always a b
         , view = view
         }

@@ -4,9 +4,9 @@ import Html as H exposing (Html)
 import Katex as K
     exposing
         ( Latex
+        , display
         , human
         , inline
-        , display
         )
 
 
@@ -30,15 +30,15 @@ view =
                 _ ->
                     H.span [] [ H.text stringLatex ]
     in
-        passage
-            |> List.map (K.generate htmlGenerator)
-            |> H.div []
+    passage
+        |> List.map (K.generate htmlGenerator)
+        |> H.div []
 
 
 main : Program Never () msg
 main =
     H.beginnerProgram
         { model = ()
-        , update = flip always
+        , update = \b a -> always a b
         , view = always view
         }

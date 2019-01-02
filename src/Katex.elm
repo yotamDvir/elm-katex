@@ -1,23 +1,26 @@
-module Katex
-    exposing
-        ( Latex
-        , human
-        , inline
-        , display
-        , print
-        , generate
-        )
+module Katex exposing
+    ( Latex
+    , human, inline, display
+    , print, generate
+    )
 
 {-| You should use this module if this is your first time using this package, or if you don't need special configurations.
 
+
 # Types
+
 @docs Latex
 
+
 # Create LaTeX instance
+
 @docs human, inline, display
 
+
 # Process LaTeX instances
+
 @docs print, generate
+
 -}
 
 import Katex.Configs as K
@@ -59,9 +62,9 @@ print =
 
 {-| Generate a function over LaTeX values. The boolean value represents whether the math is in display mode, i.e.
 
-* `Nothing` for human
-* `Just False` for inline
-* `Just True` for display
+  - `Nothing` for human
+  - `Just False` for inline
+  - `Just True` for display
 
 For example, let's say you want an `Html a` emitting function which puts display math in a `div`, but inline math and human text in a `span`.
 
@@ -72,16 +75,18 @@ For example, let's say you want an `Html a` emitting function which puts display
                 case isDisplayMode of
                     Just True ->
                         H.div [] [ H.text stringLatex ]
+
                     _ ->
                         H.span [] [ H.text stringLatex ]
         in
-            generate htmlGenerator
+        generate htmlGenerator
 
 Another example is the built-in `print` function.
 
     print : Latex -> String
     print =
         generate (\_ stringLatex -> stringLatex)
+
 -}
 generate : (Maybe Bool -> String -> a) -> Latex -> a
 generate g =

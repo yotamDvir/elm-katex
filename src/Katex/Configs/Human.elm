@@ -1,29 +1,33 @@
-module Katex.Configs.Human
-    exposing
-        ( Latex
-        , human
-        , inline
-        , display
-        , print
-        , generate
-        )
+module Katex.Configs.Human exposing
+    ( Latex
+    , human, inline, display
+    , print, generate
+    )
 
 {-| You should use this module only if you need `h`uman configurations.
 
 _Understand `Katex` before reading on._
 
+
 ### Why is this module necessary?
 
 For example, let's say you want your lecture notes in both English and Hebrew. In this case, you can write both and show whichever you want, depending on the state of your app. See _§Katex.Configs.Human_ in the README for this example in action.
 
+
 # Types
+
 @docs Latex
 
+
 # Create LaTeX instance
+
 @docs human, inline, display
 
+
 # Process LaTeX instances
+
 @docs print, generate
+
 -}
 
 import Katex.Configs as K

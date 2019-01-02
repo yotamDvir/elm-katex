@@ -5,8 +5,8 @@ import Html.Attributes exposing (dir)
 import Katex.Configs.Human as K
     exposing
         ( Latex
-        , inline
         , display
+        , inline
         )
 
 
@@ -22,6 +22,7 @@ selector : Data -> Config -> String
 selector ( english, hebrew ) isHeb =
     if isHeb then
         hebrew
+
     else
         english
 
@@ -56,21 +57,22 @@ view isHeb =
         direction =
             if isHeb then
                 dir "rtl"
+
             else
                 dir "ltr"
 
         htmlGenerator _ _ stringLatex =
             H.span [] [ H.text stringLatex ]
     in
-        passage
-            |> List.map (K.generate htmlGenerator isHeb)
-            |> H.div [ direction ]
+    passage
+        |> List.map (K.generate htmlGenerator isHeb)
+        |> H.div [ direction ]
 
 
 main : Program Never Config msg
 main =
     H.beginnerProgram
         { model = True
-        , update = flip always
+        , update = \b a -> always a b
         , view = view
         }

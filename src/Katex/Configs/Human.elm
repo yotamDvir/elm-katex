@@ -71,4 +71,4 @@ print =
 -}
 generate : (h -> Maybe Bool -> String -> a) -> h -> Latex h -> a
 generate g h =
-    K.generate (\_ h -> g h) "" h
+    K.generate (\_ x -> g x) "" h

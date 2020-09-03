@@ -256,24 +256,46 @@ Beyond the need to load the KaTeX library (both `css` and `js`), the KaTeX scrip
 <html>
   <head>
     <meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.css" integrity="sha384-wITovz90syo1dJWVh32uuETPVEtGigN07tkttEqPv+uR2SE/mbQcG7ATL28aI9H0" crossorigin="anonymous">
     <style>
-      /* LaTeX display environment will effect the LaTeX characters but not the layout on the page */
-      span.katex-display {
-        display: inherit; /* You may comment this out if you want the default behavior */
-      }
-    </style>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.js" integrity="sha384-/y1Nn9+QQAipbNQWU65krzJralCnuOasHncUFXGkdwntGeSvQicrYkiUBwsgUqc1" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/contrib/auto-render.min.js" integrity="sha384-dq1/gEHSxPZQ7DdrM82ID4YVol9BYyU7GbWlIwnwyPzotpoc57wDw/guX8EaYGPx" crossorigin="anonymous"></script>
+        /* LaTeX display environment will effect the LaTeX characters but not the layout on the page */
+        span.katex-display {
+          display: inherit; /* You may comment this out if you want the default behavior */
+        }
+      </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css" integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X" crossorigin="anonymous">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" integrity="sha384-g7c+Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI+sEnkvrMWph2EDg4" crossorigin="anonymous"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js" integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC+Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa" crossorigin="anonymous"
+      onload="renderMathInElement(document.body);"></script>
+    <script src="main.js"></script>
     <title></title>
   </head>
   <body>
-    <!-- Exposing `Elm.Main` -->
-    <script src="main.js"></script>
-    <!-- Run the app + render LaTeX using KaTeX (note the `setTimeout`!) -->
-    <script>Elm.Main.fullscreen(); setTimeout(function () {
-      renderMathInElement(document.body, {delimiters: [{left: "$begin-inline$", right: "$end-inline$", display: false},{left: "$begin-display$", right: "$end-display$", display: true}]});
-    }, 0);</script>
+    <div id="myapp"></div>
+
+    <!-- Run the app + render LaTeX using KaTeX (note the seperate script tags!) -->
+    <script>
+        var app = Elm.Main.init({
+          node: document.getElementById('myapp'),
+          flags: Date.now()
+        });
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement(document.body, {
+          delimiters: [
+            {
+              left: "$begin-inline$", 
+              right: "$end-inline$", 
+              display: false
+            }, 
+            {
+              left: "$begin-display$",
+              right: "$end-display$", 
+              display: true
+            }]});
+        });
+    </script>
   </body>
 </html>
 ```
